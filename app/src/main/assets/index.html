@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Чистка</title>
+<style>
+:root{
+  --bg:#F4F6F5; --card:#FFFFFF; --ink:#16201E; --muted:#66736F; --line:#E1E6E4;
+  --brand:#127A6B; --brand-soft:#DDF0EC; --warn:#C2492F; --warn-soft:#FBE6E0; --sun:#F2B84B;
+  --radius:16px; --shadow:0 1px 2px rgba(0,0,0,.05),0 2px 10px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0F1413; --card:#18201E; --ink:#E7EEEC; --muted:#93A19D; --line:#26302D;
+    --brand:#3DBFA8; --brand-soft:#173430; --warn:#F07A5E; --warn-soft:#3A2019; --shadow:none; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Roboto",sans-serif}
+body{padding-bottom:96px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:8px;padding:14px 16px 10px}
+.top h1{font-size:20px;margin:0;flex:1;letter-spacing:-.01em}
+.back{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:var(--card);box-shadow:var(--shadow)}
+.wrap{padding:0 16px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.big{font-size:28px;font-weight:700;letter-spacing:-.02em}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:10px 0 6px}
+.bar>i{display:block;height:100%;background:var(--brand);border-radius:5px;transition:width .3s}
+.btn{display:block;width:100%;padding:14px;border-radius:14px;background:var(--brand);color:#fff;font-weight:600;font-size:16px;text-align:center}
+.btn.ghost{background:var(--brand-soft);color:var(--brand)}
+.btn.danger{background:var(--warn);color:#fff}
+.btn[disabled]{opacity:.5}
+.sec{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 4px 8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;text-align:left;min-height:96px;display:flex;flex-direction:column;gap:4px}
+.cat .ic{font-size:22px}
+.cat b{font-size:15px;line-height:1.2}
+.cat .v{margin-top:auto;font-size:13px;color:var(--muted)}
+.cat .v strong{color:var(--brand);font-weight:600}
+.cat.zero{opacity:.55}
+.cat.wide{grid-column:1/-1;flex-direction:row;align-items:center;min-height:0;gap:12px}
+.cat.wide .v{margin:0 0 0 auto}
+.stat{display:flex;gap:10px}
+.stat>div{flex:1;background:var(--brand-soft);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-size:18px;color:var(--brand)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chip{flex:none;padding:8px 14px;border-radius:20px;background:var(--card);box-shadow:var(--shadow);font-size:14px;white-space:nowrap}
+.chip.on{background:var(--brand);color:#fff}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.th{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--line)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .ck{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);display:grid;place-items:center;color:#fff;font-size:14px;font-weight:700}
+.th.sel .ck{background:var(--warn);border-color:var(--warn)}
+.th.sel img{opacity:.6}
+.th .zoom{position:absolute;left:6px;bottom:6px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:14px}
+.th .tag{position:absolute;left:6px;top:6px;background:var(--brand);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:8px}
+.th .lab{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;padding:2px 6px;border-radius:6px}
+.th .play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:28px;text-shadow:0 1px 6px rgba(0,0,0,.5);pointer-events:none}
+.th .noimg{position:absolute;inset:0;display:grid;place-items:center;font-size:30px}
+.group{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:10px;margin-bottom:12px}
+.group .gh{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 8px;font-size:13px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);margin-bottom:8px}
+.row .ri{width:44px;height:44px;border-radius:10px;background:var(--brand-soft);display:grid;place-items:center;font-size:20px;flex:none;overflow:hidden}
+.row .ri img{width:100%;height:100%;object-fit:cover}
+.row .rt{flex:1;min-width:0}
+.row .rt b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .rt span{font-size:12px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:#fff;font-weight:700}
+.row.sel .box{background:var(--warn);border-color:var(--warn)}
+.row.keep{opacity:.75}
+.row .kb{font-size:11px;font-weight:600;color:var(--brand);background:var(--brand-soft);padding:3px 8px;border-radius:8px;flex:none}
+.tools{display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap}
+.tools button{padding:8px 12px;border-radius:10px;background:var(--card);box-shadow:var(--shadow);font-size:13px}
+.foot{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:6}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .e{font-size:44px;margin-bottom:8px}
+.more{display:block;margin:6px auto 16px;padding:10px 18px;border-radius:12px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.scan-stage{display:flex;align-items:center;gap:10px;margin-top:4px}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--brand-soft);border-top-color:var(--brand);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end}
+.modal .sheet{background:var(--card);width:100%;border-radius:20px 20px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom))}
+.modal h3{margin:0 0 6px;font-size:18px}
+.modal p{margin:0 0 16px;color:var(--muted)}
+.modal .btns{display:flex;gap:10px}
+.modal .btns .btn{flex:1}
+.viewer{position:fixed;inset:0;background:#000;z-index:15;display:flex;flex-direction:column}
+.viewer img{flex:1;min-height:0;width:100%;object-fit:contain}
+.viewer .vi{color:#fff;padding:12px 16px calc(14px + env(safe-area-inset-bottom));font-size:13px;display:flex;gap:10px;align-items:center}
+.viewer .vi div{flex:1;min-width:0}
+.viewer .vi span{display:block;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.viewer .vb{padding:9px 14px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff}
+.viewer .x{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:22px}
+.toast{position:fixed;left:16px;right:16px;bottom:96px;background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;z-index:30;font-size:14px;text-align:center;transition:opacity .3s}
+/* свайп */
+.sw{position:relative;height:calc(100vh - 250px);min-height:300px;margin:4px 0 14px}
+.sw .c{position:absolute;inset:0;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 6px 24px rgba(0,0,0,.18);touch-action:none;will-change:transform}
+.sw .c img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none}
+.sw .c .info{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 14px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:13px}
+.sw .c .stamp{position:absolute;top:24px;padding:6px 14px;border:3px solid;border-radius:10px;font-weight:800;font-size:22px;opacity:0;letter-spacing:.04em}
+.sw .c .stamp.del{right:20px;color:#FF6B57;border-color:#FF6B57;transform:rotate(12deg)}
+.sw .c .stamp.keep{left:20px;color:#4CE0B3;border-color:#4CE0B3;transform:rotate(-12deg)}
+.sw .c.under{transform:scale(.95);opacity:.7}
+.swb{display:flex;justify-content:center;gap:22px;align-items:center}
+.swb button{width:64px;height:64px;border-radius:50%;background:var(--card);box-shadow:0 3px 12px rgba(0,0,0,.12);font-size:28px}
+.swb .u{width:48px;height:48px;font-size:20px}
+.swb .d{color:var(--warn)} .swb .k{color:var(--brand)}
+.hint{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+const A = window.Android || null;
+const $app = document.getElementById('app');
+
+// ---------- состояние ----------
+let ST = {}, R = null, ITEMS = [], removed = new Set(), sel = new Set();
+let stack = [{s:'home'}];
+let scanInfo = null, scanErr = null;
+let kept = new Set(load('kept', []));
+let swipe = null;
+
+function load(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function sz(b){ if(!b) return '0 Б'; const u=['Б','КБ','МБ','ГБ','ТБ']; let i=0; while(b>=1024&&i<4){b/=1024;i++;} return (b>=100||i===0?Math.round(b):b.toFixed(1)).toString().replace('.',',')+' '+u[i]; }
+function plural(n, a, b, c){ const m10=n%10, m100=n%100; return n+' '+(m10===1&&m100!==11?a:(m10>=2&&m10<=4&&(m100<10||m100>=20)?b:c)); }
+function files(n){ return plural(n,'файл','файла','файлов'); }
+function dt(t){ const d=new Date(t); return d.toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric'}); }
+function keyOf(it){ return it.folder+'/'+it.name+'|'+it.size; }
+function it(id){ return ITEMS[id]; }
+function alive(id){ return !removed.has(id); }
+
+function place(it){
+  const f = it.folder.toLowerCase();
+  if (it.app==='telegram') return 'Telegram';
+  if (it.app==='whatsapp') return 'WhatsApp';
+  if (it.app==='viber') return 'Viber';
+  if (it.app==='vk') return 'ВКонтакте';
+  if (it.scr) return 'Скриншоты';
+  if (f.startsWith('dcim/camera')) return 'Камера';
+  if (f.startsWith('dcim')) return 'Галерея · '+it.folder.slice(5);
+  if (it.dl) return 'Загрузки';
+  return it.folder || 'Память';
+}
+const ICON = {img:'🖼️', vid:'🎬', aud:'🎵', doc:'📄', apk:'📦', arc:'🗜️', other:'📁'};
+
+function refreshState(){ try{ ST = A ? JSON.parse(A.state()) : {access:true,total:64e9,free:12e9,freed:0,trashSize:0,trashCount:0}; }catch(e){ ST={}; } }
+
+function loadResults(){
+  if (!A) return;
+  const raw = A.results();
+  if (!raw || raw==='null') return;
+  R = JSON.parse(raw);
+  ITEMS = R.items.map(a => ({id:a[0],name:a[1],folder:a[2],size:a[3],mtime:a[4],kind:a[5],app:a[6],w:a[7],h:a[8],scr:!!a[9],dl:!!a[10]}));
+  removed = new Set();
+}
+
+// ---------- категории ----------
+function liveGroups(gs){ return gs.map(g => g.filter(alive)).filter(g => g.length > 1); }
+function sum(ids){ let s=0; for(const id of ids) s+=ITEMS[id].size; return s; }
+function extras(gs){ let n=0,s=0; for(const g of gs){ for(let i=1;i<g.length;i++){ n++; s+=ITEMS[g[i]].size; } } return {n,s}; }
+
+function cats(){
+  const L = ITEMS.filter(x => alive(x.id));
+  const by = f => L.filter(f).map(x => x.id);
+  const c = {};
+  c.dup = liveGroups(R.dup);
+  c.series = liveGroups(R.series);
+  c.fdup = liveGroups(R.fdup);
+  c.screens = by(x => x.scr).sort((a,b)=>ITEMS[b].mtime-ITEMS[a].mtime);
+  c.blurry = R.blurry.filter(alive);
+  c.dark = R.dark.filter(alive);
+  c.videos = by(x => x.kind==='vid').sort((a,b)=>ITEMS[b].size-ITEMS[a].size);
+  c.msg = by(x => x.app).sort((a,b)=>ITEMS[b].size-ITEMS[a].size);
+  c.big = by(x => x.size >= 50*1048576 && x.kind!=='vid').sort((a,b)=>ITEMS[b].size-ITEMS[a].size);
+  c.down = by(x => x.dl).sort((a,b)=>ITEMS[a].mtime-ITEMS[b].mtime);
+  c.apk = by(x => x.kind==='apk').sort((a,b)=>ITEMS[b].size-ITEMS[a].size);
+  c.arc = by(x => x.kind==='arc').sort((a,b)=>ITEMS[b].size-ITEMS[a].size);
+  c.empty = (R.empty||[]).filter(p => !removedDirs.has(p));
+  return c;
+}
+let removedDirs = new Set();
+
+const META = {
+  dup:    {t:'Копии и обработанные', ic:'🪞', d:'Одно и то же фото: пересланное, сжатое, с фильтром. Лучшее уже отмечено «Оставить».'},
+  series: {t:'Похожие серии', ic:'📸', d:'Несколько похожих кадров подряд. Отметь лишние или нажми «Всё, кроме лучших».'},
+  screens:{t:'Скриншоты', ic:'📱', d:'Все скриншоты, сначала новые.'},
+  blurry: {t:'Размытые', ic:'🌫️', d:'Фото, где не удалось найти чётких деталей. Сначала самые размытые.'},
+  dark:   {t:'Тёмные', ic:'🌑', d:'Почти чёрные кадры, часто снятые случайно в кармане.'},
+  videos: {t:'Тяжёлые видео', ic:'🎬', d:'Все видео, сначала самые большие.'},
+  msg:    {t:'Мессенджеры', ic:'💬', d:'Фото, видео, голосовые и документы, которые сохранили Telegram, WhatsApp, Viber и ВК.'},
+  big:    {t:'Большие файлы', ic:'🐘', d:'Файлы больше 50 МБ (кроме видео — они в своём разделе).'},
+  down:   {t:'Загрузки', ic:'⬇️', d:'Папка «Загрузки», сначала самые старые.'},
+  apk:    {t:'Установщики APK', ic:'📦', d:'Файлы установки приложений. После установки обычно не нужны.'},
+  arc:    {t:'Архивы', ic:'🗜️', d:'ZIP, RAR, 7Z и другие архивы.'},
+  fdup:   {t:'Дубликаты файлов', ic:'👯', d:'Файлы с точно одинаковым содержимым. Оставляем один, остальные отмечены.'},
+  empty:  {t:'Пустые папки', ic:'🗂️', d:'Папки, в которых ничего нет. Удаляются сразу, без корзины.'},
+};
+
+function catValue(k, c){
+  const v = c[k];
+  if (k==='dup'||k==='fdup'){ const e=extras(v); return {n:e.n, s:e.s, label: e.n? `<strong>${sz(e.s)}</strong> · ${plural(v.length,'группа','группы','групп')}` : 'нет'}; }
+  if (k==='series'){ const e=extras(v); return {n:v.length, s:e.s, label: v.length? `${plural(v.length,'серия','серии','серий')} · до <strong>${sz(e.s)}</strong>` : 'нет'}; }
+  if (k==='empty') return {n:v.length, s:0, label: v.length? plural(v.length,'папка','папки','папок') : 'нет'};
+  const s = sum(v);
+  return {n:v.length, s, label: v.length? `<strong>${sz(s)}</strong> · ${v.length}` : 'нет'};
+}
+
+// ---------- отрисовка ----------
+function go(screen){ stack.push(screen); sel = new Set(); render(); scrollTo(0,0); }
+window.goBack = function(){
+  if (document.querySelector('.modal')) { closeModal(); return true; }
+  if (document.querySelector('.viewer')) { closeViewer(); return true; }
+  const cur = stack[stack.length-1];
+  if (cur.s==='swipe' && swipe && swipe.del.length){
+    confirmBox('Выйти из свайп-режима?', `Отмечено к удалению: ${files(swipe.del.length)}. Удалить их или забыть отметки?`, 'Удалить', () => { commitSwipe(); }, 'Забыть', () => { swipe=null; stack.pop(); render(); });
+    return true;
+  }
+  if (stack.length > 1){ stack.pop(); sel=new Set(); render(); return true; }
+  return false;
+};
+
+function render(){
+  refreshState();
+  const cur = stack[stack.length-1];
+  const fn = {home:renderHome, cat:renderCat, swipe:renderSwipe, trash:renderTrash}[cur.s];
+  $app.innerHTML = fn(cur);
+  bind(cur);
+}
+
+function header(title, back=true){
+  return `<div class="top">${back?'<button class="back" data-a="back">‹</button>':''}<h1>${esc(title)}</h1></div>`;
+}
+
+function renderHome(){
+  let h = header('Чистка', false) + '<div class="wrap">';
+  const used = (ST.total||0) - (ST.free||0);
+  const pct = ST.total ? Math.round(used/ST.total*100) : 0;
+  h += `<div class="card"><div class="muted small">Память телефона</div>
+    <div class="big">${sz(ST.free)} <span class="muted" style="font-size:15px;font-weight:400">свободно из ${sz(ST.total)}</span></div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="stat" style="margin-top:12px">
+      <div><span class="small muted">Освобождено всего</span><b>${sz(ST.freed)}</b></div>
+      <div><span class="small muted">В корзине</span><b>${sz(ST.trashSize)}</b></div>
+    </div></div>`;
+
+  if (!ST.access){
+    h += `<div class="card"><b>Нужен доступ к файлам</b>
+      <p class="muted small" style="margin:6px 0 14px">Чтобы найти дубликаты и мусор, приложению нужно видеть память телефона. На следующем экране включи переключатель «Разрешить доступ ко всем файлам» и вернись сюда. Всё проверяется только на телефоне, ничего никуда не отправляется.</p>
+      <button class="btn" data-a="access">Дать доступ</button></div>`;
+    return h + '</div>';
+  }
+
+  if (ST.scanning || scanInfo){
+    h += `<div class="card"><b>Проверяю память…</b><div class="scan-stage"><div class="spin"></div><span class="muted small" id="stage">${stageText()}</span></div>
+      <div class="bar"><i id="sbar" style="width:${stagePct()}%"></i></div>
+      <div class="muted small">Первый раз долго — изучаю каждое фото. Дальше будет быстрее.</div></div>`;
+  } else if (!R){
+    h += `<div class="card"><b>Готова найти лишнее</b><p class="muted small" style="margin:6px 0 14px">Копии и обработанные фото, похожие серии, скриншоты, размытые кадры, тяжёлые видео, мусор мессенджеров, старые загрузки, APK, дубликаты файлов и пустые папки.</p>
+      ${scanErr?`<p class="small" style="color:var(--warn)">Ошибка: ${esc(scanErr)}</p>`:''}
+      <button class="btn" data-a="scan">Проверить память</button></div>`;
+  }
+
+  if (R && !ST.scanning && !scanInfo){
+    const c = cats();
+    const sure = extras(c.dup).s + extras(c.fdup).s + sum(c.apk);
+    h += `<div class="card" style="background:var(--brand);color:#fff"><div class="small" style="opacity:.85">Точно лишнее (копии и установщики)</div><div class="big">${sz(sure)}</div>
+      <div class="small" style="opacity:.85">А ещё скриншоты, видео и мессенджеры — смотри ниже</div></div>`;
+    h += `<div class="grid"><button class="cat wide" data-a="swipe"><span class="ic">👆</span><div><b>Свайп-режим</b><div class="small muted">Листай фото: влево — удалить, вправо — оставить</div></div></button></div>`;
+    h += '<div class="sec">Фото и видео</div><div class="grid">' + ['dup','series','screens','blurry','dark','videos','msg'].map(k => catBtn(k,c)).join('') + '</div>';
+    h += '<div class="sec">Файлы</div><div class="grid">' + ['big','down','apk','arc','fdup','empty'].map(k => catBtn(k,c)).join('') + '</div>';
+    h += `<div class="grid" style="margin-top:10px"><button class="cat wide" data-a="trash"><span class="ic">🗑️</span><div><b>Корзина</b><div class="small muted">Восстановить можно 30 дней</div></div><span class="v">${ST.trashCount? `<strong>${sz(ST.trashSize)}</strong>`:'пусто'}</span></button></div>`;
+    h += `<button class="btn ghost" style="margin-top:14px" data-a="scan">Проверить заново</button>`;
+  } else if (ST.trashCount){
+    h += `<div class="grid"><button class="cat wide" data-a="trash"><span class="ic">🗑️</span><div><b>Корзина</b><div class="small muted">Восстановить можно 30 дней</div></div><span class="v"><strong>${sz(ST.trashSize)}</strong></span></button></div>`;
+  }
+  return h + '</div>';
+}
+
+function catBtn(k, c){
+  const m = META[k], v = catValue(k, c);
+  return `<button class="cat ${v.n?'':'zero'}" data-a="cat" data-k="${k}"><span class="ic">${m.ic}</span><b>${m.t}</b><span class="v">${v.label}</span></button>`;
+}
+
+function stageText(){
+  if (!scanInfo) return 'Начинаю…';
+  const {stage, done, total} = scanInfo;
+  if (stage==='walk') return `Ищу файлы… найдено ${done.toLocaleString('ru-RU')}`;
+  if (stage==='photos') return total ? `Изучаю фото: ${done.toLocaleString('ru-RU')} из ${total.toLocaleString('ru-RU')}` : 'Изучаю фото…';
+  if (stage==='group') return 'Ищу похожие фото…';
+  if (stage==='files') return 'Сравниваю файлы…';
+  return 'Почти готово…';
+}
+function stagePct(){
+  if (!scanInfo) return 2;
+  const {stage, done, total} = scanInfo;
+  const p = total ? done/total : 0;
+  if (stage==='walk') return 5;
+  if (stage==='photos') return 8 + p*72;
+  if (stage==='group') return 80 + p*10;
+  if (stage==='files') return 90 + p*9;
+  return 100;
+}
+
+// ---------- экран категории ----------
+const PAGE = 40;
+
+function renderCat(cur){
+  const k = cur.k, m = META[k], c = cats();
+  let h = header(m.t) + '<div class="wrap">';
+  h += `<p class="muted small" style="margin:0 0 12px">${m.d}</p>`;
+  if (!cur.init){ cur.init = true; cur.limit = PAGE; preselect(k, c); }
+
+  if (k==='dup' || k==='series' || k==='fdup'){
+    const gs = c[k];
+    if (!gs.length) return h + emptyBox() + '</div>';
+    h += `<div class="tools"><button data-a="selbest">Всё, кроме лучших</button><button data-a="selnone">Снять отметки</button></div>`;
+    gs.slice(0, cur.limit).forEach((g, gi) => { h += k==='fdup' ? fileGroup(g) : photoGroup(g); });
+    if (gs.length > cur.limit) h += `<button class="more" data-a="more">Показать ещё (${gs.length-cur.limit})</button>`;
+  } else if (k==='empty'){
+    const ps = c.empty;
+    if (!ps.length) return h + emptyBox() + '</div>';
+    ps.forEach(p => { h += `<div class="row"><div class="ri">🗂️</div><div class="rt"><b>${esc(p.split('/').pop())}</b><span>${esc(p.replace(R.root+'/',''))}</span></div></div>`; });
+  } else {
+    let ids = c[k];
+    if (k==='msg'){
+      const apps = [['','Все'],['telegram','Telegram'],['whatsapp','WhatsApp'],['viber','Viber'],['vk','ВК']].filter(a => !a[0] || ids.some(id => ITEMS[id].app===a[0]));
+      const kinds = [['','Всё'],['img','Фото'],['vid','Видео'],['aud','Голосовые и аудио'],['doc','Документы']];
+      cur.app = cur.app||''; cur.kind = cur.kind||'';
+      h += '<div class="chips">' + apps.map(a => `<button class="chip ${cur.app===a[0]?'on':''}" data-a="app" data-v="${a[0]}">${a[1]}</button>`).join('') + '</div>';
+      h += '<div class="chips">' + kinds.map(a => `<button class="chip ${cur.kind===a[0]?'on':''}" data-a="kind" data-v="${a[0]}">${a[1]}</button>`).join('') + '</div>';
+      ids = ids.filter(id => (!cur.app || ITEMS[id].app===cur.app) && (!cur.kind || ITEMS[id].kind===cur.kind || (cur.kind==='doc' && !['img','vid','aud'].includes(ITEMS[id].kind))));
+      h += `<p class="small muted" style="margin:0 0 10px">${files(ids.length)} · ${sz(sum(ids))}</p>`;
+    }
+    if (!ids.length) return h + emptyBox() + '</div>';
+    h += `<div class="tools"><button data-a="selall">Выбрать все (${ids.length})</button><button data-a="selnone">Снять отметки</button></div>`;
+    const shown = ids.slice(0, cur.limit * 3);
+    const media = shown.filter(id => ['img','vid'].includes(ITEMS[id].kind));
+    if (media.length === shown.length){
+      h += '<div class="thumbs">' + shown.map(id => thumb(id)).join('') + '</div>';
+    } else {
+      h += shown.map(id => fileRow(id)).join('');
+    }
+    if (ids.length > shown.length) h += `<button class="more" data-a="more">Показать ещё (${ids.length-shown.length})</button>`;
+    cur.visible = ids;
+  }
+  return h + '</div>' + footer(k);
+}
+
+function emptyBox(){ return `<div class="empty"><div class="e">✨</div>Здесь чисто</div>`; }
+
+function preselect(k, c){
+  sel = new Set();
+  if (k==='dup' || k==='fdup') for (const g of c[k]) g.slice(1).forEach(id => sel.add(id));
+}
+
+function photoGroup(g){
+  const save = g.slice(1).reduce((s,id)=>s+ITEMS[id].size,0);
+  let h = `<div class="group"><div class="gh"><span>${plural(g.length,'фото','фото','фото')}</span><span>лишнее до ${sz(save)}</span></div><div class="thumbs">`;
+  g.forEach((id, i) => { h += thumb(id, i===0 ? 'Оставить' : null, true); });
+  return h + '</div></div>';
+}
+
+function fileGroup(g){
+  let h = `<div class="group"><div class="gh"><span>${files(g.length)} · по ${sz(ITEMS[g[0]].size)}</span></div>`;
+  g.forEach((id, i) => { h += fileRow(id, i===0); });
+  return h + '</div>';
+}
+
+function thumb(id, tag, showPlace){
+  const x = ITEMS[id];
+  const label = showPlace ? place(x) : (x.kind==='vid' || x.size > 5*1048576 ? sz(x.size) : '');
+  return `<div class="th ${sel.has(id)?'sel':''}" data-a="tog" data-id="${id}">
+    <img loading="lazy" src="/thumb?id=${id}" onerror="this.style.display='none'">
+    ${x.kind==='vid'?'<div class="play">▶</div>':''}
+    ${tag?`<span class="tag">${tag}</span>`:''}
+    <span class="ck">${sel.has(id)?'✓':''}</span>
+    <span class="zoom" data-a="view" data-id="${id}">⤢</span>
+    ${label?`<span class="lab">${esc(label)}</span>`:''}</div>`;
+}
+
+function fileRow(id, keepBadge){
+  const x = ITEMS[id];
+  const pic = ['img','vid'].includes(x.kind) ? `<img loading="lazy" src="/thumb?id=${id}" onerror="this.replaceWith('${ICON[x.kind]}')">` : ICON[x.kind];
+  return `<div class="row ${sel.has(id)?'sel':''}" data-a="tog" data-id="${id}">
+    <div class="ri" data-a="${['img','vid'].includes(x.kind)?'view':'open'}" data-id="${id}">${pic}</div>
+    <div class="rt"><b>${esc(x.name)}</b><span>${sz(x.size)} · ${dt(x.mtime)} · ${esc(place(x))}</span></div>
+    ${keepBadge?'<span class="kb">Оставить</span>':''}<span class="box">${sel.has(id)?'✓':''}</span></div>`;
+}
+
+function footer(k){
+  if (k==='empty'){
+    const n = cats().empty.length;
+    return n ? `<div class="foot"><button class="btn danger" data-a="delempty">Удалить пустые папки (${n})</button></div>` : '';
+  }
+  const ids = [...sel].filter(alive);
+  return `<div class="foot"><button class="btn danger" data-a="delsel" ${ids.length?'':'disabled'}>${ids.length?`Удалить ${files(ids.length)} · ${sz(sum(ids))}`:'Отметь, что удалить'}</button></div>`;
+}
+
+function updateFooter(){
+  const cur = stack[stack.length-1];
+  const f = document.querySelector('.foot');
+  if (f && cur.s==='cat') f.outerHTML = footer(cur.k);
+}
+
+// ---------- свайп ----------
+function swipeSource(src){
+  let ids = ITEMS.filter(x => x.kind==='img' && alive(x.id) && !kept.has(keyOf(x)));
+  if (src==='screens') ids = ids.filter(x => x.scr);
+  if (src==='msg') ids = ids.filter(x => x.app);
+  if (src==='blurry'){ const s = new Set(R.blurry.concat(R.dark)); ids = ids.filter(x => s.has(x.id)); }
+  ids.sort((a,b) => src==='old' ? a.mtime-b.mtime : b.mtime-a.mtime);
+  return ids.map(x => x.id);
+}
+
+function renderSwipe(cur){
+  if (!swipe) swipe = {src: cur.src||'all', queue: swipeSource(cur.src||'all'), pos: 0, del: [], hist: []};
+  let h = header('Свайп-режим') + '<div class="wrap">';
+  const srcs = [['all','Все фото'],['old','Сначала старые'],['screens','Скриншоты'],['msg','Из мессенджеров'],['blurry','Неудачные']];
+  h += '<div class="chips">' + srcs.map(s => `<button class="chip ${swipe.src===s[0]?'on':''}" data-a="swsrc" data-v="${s[0]}">${s[1]}</button>`).join('') + '</div>';
+  const id = swipe.queue[swipe.pos], next = swipe.queue[swipe.pos+1];
+  if (id === undefined){
+    h += `<div class="empty"><div class="e">🎉</div>Фото в этой подборке закончились</div>`;
+  } else {
+    const x = ITEMS[id];
+    h += `<div class="sw">
+      ${next!==undefined?`<div class="c under"><img src="/full?id=${next}"></div>`:''}
+      <div class="c" id="card"><img src="/full?id=${id}"><span class="stamp del">УДАЛИТЬ</span><span class="stamp keep">ОСТАВИТЬ</span>
+      <div class="info"><b>${dt(x.mtime)}</b> · ${esc(place(x))} · ${sz(x.size)}</div></div></div>
+      <div class="swb"><button class="u" data-a="swundo" ${swipe.hist.length?'':'disabled'}>↶</button><button class="d" data-a="swdel">✕</button><button class="k" data-a="swkeep">✓</button></div>
+      <div class="hint">Осталось ${swipe.queue.length - swipe.pos} · влево — удалить, вправо — оставить</div>`;
+  }
+  h += '</div>';
+  const n = swipe.del.length;
+  h += `<div class="foot"><button class="btn danger" data-a="swcommit" ${n?'':'disabled'}>${n?`Удалить отмеченные: ${files(n)} · ${sz(sum(swipe.del))}`:'Отмеченных к удалению пока нет'}</button></div>`;
+  return h;
+}
+
+function swipeAct(dir){
+  const id = swipe.queue[swipe.pos];
+  if (id === undefined) return;
+  const card = document.getElementById('card');
+  const finish = () => {
+    if (dir<0) swipe.del.push(id); else { kept.add(keyOf(ITEMS[id])); save('kept', [...kept]); }
+    swipe.hist.push({id, dir});
+    swipe.pos++;
+    render();
+  };
+  if (card){
+    card.style.transition = 'transform .25s ease-out, opacity .25s';
+    card.style.transform = `translateX(${dir*130}%) rotate(${dir*18}deg)`;
+    card.style.opacity = '0';
+    setTimeout(finish, 220);
+  } else finish();
+}
+
+function swipeUndo(){
+  const last = swipe.hist.pop();
+  if (!last) return;
+  if (last.dir<0) swipe.del = swipe.del.filter(x => x!==last.id);
+  else { kept.delete(keyOf(ITEMS[last.id])); save('kept', [...kept]); }
+  swipe.pos--;
+  render();
+}
+
+function bindSwipeCard(){
+  const card = document.getElementById('card');
+  if (!card) return;
+  const sd = card.querySelector('.stamp.del'), sk = card.querySelector('.stamp.keep');
+  let x0 = 0, y0 = 0, dx = 0, on = false;
+  card.addEventListener('pointerdown', e => { on = true; x0 = e.clientX; y0 = e.clientY; dx = 0; card.setPointerCapture(e.pointerId); card.style.transition = 'none'; });
+  card.addEventListener('pointermove', e => {
+    if (!on) return;
+    dx = e.clientX - x0;
+    const dy = (e.clientY - y0) * 0.2;
+    card.style.transform = `translate(${dx}px,${dy}px) rotate(${dx/18}deg)`;
+    sd.style.opacity = Math.min(1, Math.max(0, -dx/100));
+    sk.style.opacity = Math.min(1, Math.max(0, dx/100));
+  });
+  const end = () => {
+    if (!on) return; on = false;
+    const lim = card.offsetWidth * 0.28;
+    if (dx < -lim) swipeAct(-1);
+    else if (dx > lim) swipeAct(1);
+    else if (Math.abs(dx) < 6) { /* тап — ничего */ card.style.transform=''; }
+    else { card.style.transition = 'transform .2s'; card.style.transform = ''; sd.style.opacity = 0; sk.style.opacity = 0; }
+  };
+  card.addEventListener('pointerup', end);
+  card.addEventListener('pointercancel', end);
+}
+
+function commitSwipe(){
+  const ids = swipe.del.slice();
+  doTrash(ids, () => { swipe = null; if (stack[stack.length-1].s==='swipe') stack.pop(); render(); });
+}
+
+// ---------- корзина ----------
+function renderTrash(cur){
+  let list = [];
+  try { list = A ? JSON.parse(A.trashList()) : []; } catch(e){}
+  list.sort((a,b) => b.time - a.time);
+  cur.list = list;
+  let h = header('Корзина') + '<div class="wrap">';
+  h += `<p class="muted small" style="margin:0 0 12px">Здесь лежит всё, что ты удалила. Через 30 дней файлы удалятся сами. Место освобождается после очистки корзины.</p>`;
+  if (!list.length) return h + `<div class="empty"><div class="e">🗑️</div>Корзина пуста</div></div>`;
+  h += `<div class="tools"><button data-a="tselall">Выбрать все</button><button data-a="selnone">Снять отметки</button></div>`;
+  list.slice(0, 300).forEach(e => {
+    const k = (() => { const ex=(e.name.split('.').pop()||'').toLowerCase(); return ['jpg','jpeg','png','webp','heic','heif'].includes(ex)?'img':(['mp4','mkv','mov','3gp','webm'].includes(ex)?'vid':'other'); })();
+    const days = Math.max(0, 30 - Math.floor((Date.now()-e.time)/86400000));
+    const pic = k!=='other' ? `<img loading="lazy" src="/tthumb?tid=${encodeURIComponent(e.tid)}&name=${encodeURIComponent(e.name)}" onerror="this.replaceWith('${ICON[k]}')">` : '📁';
+    h += `<div class="row ${sel.has(e.tid)?'sel':''}" data-a="ttog" data-id="${esc(e.tid)}"><div class="ri">${pic}</div>
+      <div class="rt"><b>${esc(e.name)}</b><span>${sz(e.size)} · удалится через ${plural(days,'день','дня','дней')}</span></div><span class="box">${sel.has(e.tid)?'✓':''}</span></div>`;
+  });
+  if (list.length > 300) h += `<p class="small muted">Показаны первые 300 из ${list.length}</p>`;
+  const n = sel.size;
+  h += '</div>';
+  h += `<div class="foot"><div style="display:flex;gap:10px">
+    <button class="btn ghost" data-a="trestore" ${n?'':'disabled'}>Восстановить${n?' ('+n+')':''}</button>
+    <button class="btn danger" data-a="tpurge">${n?'Удалить навсегда ('+n+')':'Очистить всё · '+sz(ST.trashSize)}</button></div></div>`;
+  return h;
+}
+
+// ---------- действия ----------
+function doTrash(ids, after){
+  ids = ids.filter(alive);
+  if (!ids.length) return;
+  confirmBox(`Удалить ${files(ids.length)}?`, `${sz(sum(ids))} уйдёт в корзину. Передумаешь — восстановишь в течение 30 дней.`, 'Удалить', () => {
+    let r = {ok:0, fail:0};
+    try { r = JSON.parse(A.trash(JSON.stringify(ids))); } catch(e){}
+    ids.forEach(id => removed.add(id));
+    sel = new Set();
+    toast(r.ok ? `В корзине: ${files(r.ok)}, ${sz(r.bytes)}${r.fail?` · не получилось: ${r.fail}`:''}` : 'Не получилось удалить');
+    after ? after() : render();
+  });
+}
+
+function bind(cur){
+  if (cur.s==='swipe') bindSwipeCard();
+}
+
+$app.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (!el) return;
+  const a = el.dataset.a, cur = stack[stack.length-1];
+  const id = el.dataset.id !== undefined ? (cur.s==='trash' ? el.dataset.id : +el.dataset.id) : null;
+  switch (a){
+    case 'back': goBack(); break;
+    case 'access': A && A.requestAccess(); break;
+    case 'scan': startScan(); break;
+    case 'cat': go({s:'cat', k: el.dataset.k}); break;
+    case 'swipe': swipe = null; go({s:'swipe'}); break;
+    case 'trash': go({s:'trash'}); break;
+    case 'more': cur.limit += PAGE; render(); break;
+    case 'view': e.stopPropagation(); openViewer(id); break;
+    case 'open': e.stopPropagation(); A && A.open(id); break;
+    case 'tog': {
+      sel.has(id) ? sel.delete(id) : sel.add(id);
+      el.classList.toggle('sel', sel.has(id));
+      const ck = el.querySelector('.ck, .box'); if (ck) ck.textContent = sel.has(id) ? '✓' : '';
+      updateFooter(); break;
+    }
+    case 'selall': (cur.visible||[]).forEach(i => sel.add(i)); render(); break;
+    case 'selnone': sel = new Set(); render(); break;
+    case 'selbest': sel = new Set(); cats()[cur.k].forEach(g => g.slice(1).forEach(i => sel.add(i))); render(); break;
+    case 'app': cur.app = el.dataset.v; sel = new Set(); cur.limit = PAGE; render(); break;
+    case 'kind': cur.kind = el.dataset.v; sel = new Set(); cur.limit = PAGE; render(); break;
+    case 'delsel': doTrash([...sel]); break;
+    case 'delempty': {
+      const ps = cats().empty;
+      confirmBox('Удалить пустые папки?', `${plural(ps.length,'папка','папки','папок')} без файлов. Внутри ничего нет, так что терять нечего.`, 'Удалить', () => {
+        const n = A ? +A.deleteEmpty(JSON.stringify(ps)) : 0;
+        ps.forEach(p => removedDirs.add(p));
+        toast(`Удалено папок: ${n}`); render();
+      });
+      break;
+    }
+    case 'swsrc': swipe = null; cur.src = el.dataset.v; render(); break;
+    case 'swdel': swipeAct(-1); break;
+    case 'swkeep': swipeAct(1); break;
+    case 'swundo': swipeUndo(); break;
+    case 'swcommit': commitSwipe(); break;
+    case 'ttog': sel.has(id) ? sel.delete(id) : sel.add(id); render(); break;
+    case 'tselall': (cur.list||[]).forEach(x => sel.add(x.tid)); render(); break;
+    case 'trestore': {
+      const t = [...sel];
+      const r = JSON.parse(A.restore(JSON.stringify(t)));
+      sel = new Set(); toast(`Восстановлено: ${files(r.ok)}. Пересканируй, чтобы они снова появились в разделах.`); render(); break;
+    }
+    case 'tpurge': {
+      const t = [...sel];
+      const title = t.length ? `Удалить навсегда ${files(t.length)}?` : 'Очистить корзину?';
+      confirmBox(title, 'Восстановить их уже не получится.', 'Удалить навсегда', () => {
+        const r = JSON.parse(A.purge(t.length ? JSON.stringify(t) : 'all'));
+        sel = new Set(); toast(`Освобождено ${sz(r.bytes)} 🎉`); render();
+      });
+      break;
+    }
+  }
+});
+
+// ---------- просмотр ----------
+function openViewer(id){
+  const x = ITEMS[id];
+  const v = document.createElement('div');
+  v.className = 'viewer';
+  v.innerHTML = `<img src="/full?id=${id}"><button class="x">×</button>
+    <div class="vi"><div><b>${esc(x.name)}</b><span>${sz(x.size)}${x.w?` · ${x.w}×${x.h}`:''} · ${dt(x.mtime)}</span><span>${esc(x.folder)}</span></div>
+    <button class="vb" data-o="1">Открыть</button></div>`;
+  v.querySelector('.x').onclick = closeViewer;
+  v.querySelector('[data-o]').onclick = () => A && A.open(id);
+  document.body.appendChild(v);
+}
+function closeViewer(){ const v = document.querySelector('.viewer'); if (v) v.remove(); }
+
+// ---------- окна ----------
+function confirmBox(title, text, okText, onOk, altText, onAlt){
+  closeModal();
+  const m = document.createElement('div');
+  m.className = 'modal';
+  m.innerHTML = `<div class="sheet"><h3>${esc(title)}</h3><p>${esc(text)}</p><div class="btns">
+    <button class="btn ghost" data-m="alt">${esc(altText||'Отмена')}</button><button class="btn danger" data-m="ok">${esc(okText)}</button></div></div>`;
+  m.addEventListener('click', e => {
+    const b = e.target.closest('[data-m]');
+    if (e.target === m) { closeModal(); return; }
+    if (!b) return;
+    closeModal();
+    if (b.dataset.m==='ok') onOk(); else if (onAlt) onAlt();
+  });
+  document.body.appendChild(m);
+}
+function closeModal(){ const m = document.querySelector('.modal'); if (m) m.remove(); }
+let toastT = 0;
+function toast(msg){
+  let t = document.querySelector('.toast');
+  if (!t){ t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity = 1;
+  clearTimeout(toastT); toastT = setTimeout(() => { t.style.opacity = 0; setTimeout(() => t.remove(), 300); }, 3200);
+}
+
+// ---------- сканирование ----------
+function startScan(){
+  if (!A) return;
+  scanErr = null;
+  scanInfo = {stage:'walk', done:0, total:0};
+  stack = [{s:'home'}];
+  A.startScan();
+  render();
+}
+window.onProgress = function(stage, done, total){
+  scanInfo = {stage, done, total};
+  const s = document.getElementById('stage'), b = document.getElementById('sbar');
+  if (s) s.textContent = stageText(); else if (stack.length===1) render();
+  if (b) b.style.width = stagePct() + '%';
+};
+window.onScanDone = function(){
+  scanInfo = null;
+  loadResults();
+  if (stack[stack.length-1].s==='home') render();
+};
+window.onScanError = function(msg){ scanInfo = null; scanErr = msg; render(); };
+window.onResumeApp = function(){
+  const before = ST.access;
+  refreshState();
+  if (stack[stack.length-1].s==='home' || before !== ST.access) { if (stack.length===1) render(); }
+};
+
+// ---------- старт ----------
+refreshState();
+loadResults();
+if (ST.scanning) scanInfo = {stage:'walk', done:0, total:0};
+render();
+</script>
+</body>
+</html>

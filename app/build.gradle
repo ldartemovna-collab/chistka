@@ -1,0 +1,20 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'ru.chistka.app'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'ru.chistka.app'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+    signingConfigs {
+        own { storeFile file('chistka.keystore'); storePassword 'chistka'; keyAlias 'chistka'; keyPassword 'chistka' }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.own }
+        release { minifyEnabled false; signingConfig signingConfigs.own }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
